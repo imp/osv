@@ -130,6 +130,10 @@ def start_osv_qemu(options):
     elif options.ide:
         args += [
         "-hda", options.image_file]
+    elif options.nvme:
+        args += [
+        "-drive", "file=%s,if=none,id=hd0,media=disk,aio=native,cache=%s" % (options.image_file, cache),
+        "-device", "nvme,drive=hd0,id=nvme0,serial=ZD120094"]
     else:
         args += [
         "-device", "virtio-blk-pci,id=blk0,drive=hd0,scsi=off%s%s" % (boot_index, options.virtio_device_suffix),
@@ -139,6 +143,14 @@ def start_osv_qemu(options):
         args += [
         "-device", "virtio-blk-pci,id=blk1,bootindex=1,drive=hd1,scsi=off%s" % options.virtio_device_suffix,
         "-drive", "file=%s,if=none,id=hd1" % (options.cloud_init_image)]
+
+    if options.extra_nvme:
+        nvme_image = os.path.join(os.path.dirname(options.image_file), "nvme-disk.img")
+        if not os.path.exists(nvme_image):
+            subprocess.call(["qemu-img", "create", "-f", "qcow2", nvme_image, "32G"])
+        args += [
+        "-drive", "file=%s,if=none,id=NVME" % (nvme_image,),
+        "-device", "nvme,id=nvme1,drive=NVME,serial=ZD120146"]
 
     if options.no_shutdown:
         args += ["-no-reboot", "-no-shutdown"]
@@ -437,6 +449,10 @@ if __name__ == "__main__":
                         help="use AHCI instead of virtio-blk")
     parser.add_argument("-I", "--ide", action="store_true", default=False,
                         help="use ide instead of virtio-blk")
+    parser.add_argument("-N", "--nvme", action="store_true", default=False,
+                        help="use NVME instead of virtio-blk")
+    parser.add_argument("-E", "--extra-nvme", action="store_true", default=False,
+                        help="use additional NVME device")
     parser.add_argument("-3", "--vmxnet3", action="store_true", default=False,
                         help="use vmxnet3 instead of virtio-net")
     parser.add_argument("-n", "--networking", action="store_true",
