@@ -250,6 +250,10 @@ namespace pci {
             PCI_SUB_CLASS_STORAGE_NVMC      = 0x08,
         };
 
+        enum pci_programming_interface_codes {
+            PCI_PROG_IF_ENTERPRISE_NVMHCI   = 0x02,
+        };
+
         function(u8 bus, u8 device, u8 func);
         virtual ~function();
 
