@@ -257,6 +257,7 @@ void arch_init_premain()
 #include "drivers/vmw-pvscsi.hh"
 #include "drivers/vmxnet3.hh"
 #include "drivers/ide.hh"
+#include "drivers/nvme.hh"
 
 extern bool opt_pci_disabled;
 void arch_init_drivers()
@@ -285,6 +286,7 @@ void arch_init_drivers()
     drvman->register_driver(vmw::pvscsi::probe);
     drvman->register_driver(vmw::vmxnet3::probe);
     drvman->register_driver(ide::ide_drive::probe);
+    drvman->register_driver(nvme::nvme::probe);
     boot_time.event("drivers probe");
     drvman->load_all();
     drvman->list_drivers();

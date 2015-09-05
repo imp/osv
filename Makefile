@@ -857,6 +857,7 @@ drivers += drivers/ide.o
 drivers += drivers/scsi-common.o
 drivers += drivers/vmw-pvscsi.o
 drivers += drivers/xenplatform-pci.o
+drivers += drivers/nvme.o
 endif # x64
 
 ifeq ($(arch),aarch64)
